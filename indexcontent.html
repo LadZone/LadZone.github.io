@@ -1,12 +1,6 @@
 
 <style>
-pp {
-    text-indent: 50px;
-}
 
-ppp {
-    text-indent: 100px;
-}
 </style>
 
 
@@ -66,104 +60,104 @@ Pin 16 (VDD)      Pin 1  (3.3V)           </pre>
 
 <div style="background-color:#E3E3E3;color:black;padding:20px;">
  
- <p>#!/usr/bin/env python</p>
+<p> #!/usr/bin/env python</p>
 
-<p>import time</p>
-<p>import RPi.GPIO as GPIO</p>
-<p></p>
-<p>GPIO.setmode(GPIO.BCM)</p>
-<p>GPIO.setwarnings(False)</p>
+import time</p>
+import RPi.GPIO as GPIO</p>
 
-<p># read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)</p>
-<p>def readadc(adcnum, clockpin, mosipin, misopin, cspin):</p>
-<ppp>    if ((adcnum > 7) or (adcnum < 0)): </ppp>
-<ppp>         return -1</ppp> 
-    GPIO.output(cspin, True)
+GPIO.setmode(GPIO.BCM)</p>
+GPIO.setwarnings(False)</p>
 
-    GPIO.output(clockpin, False)  # start clock low
-    GPIO.output(cspin, False)     # bring CS low
+# read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)</p>
+def readadc(adcnum, clockpin, mosipin, misopin, cspin):</p>
+    if ((adcnum > 7) or (adcnum < 0)):</p>
+        return -1</p>
+    GPIO.output(cspin, True)</p>
 
-    commandout = adcnum
-    commandout |= 0x18  # start bit + single-ended bit
-    commandout <<= 3    # we only need to send 5 bits here
-    for i in range(5):
-        if (commandout & 0x80):
-            GPIO.output(mosipin, True)
-        else:
-            GPIO.output(mosipin, False)
-        commandout <<= 1
-        GPIO.output(clockpin, True)
-        GPIO.output(clockpin, False)
+    GPIO.output(clockpin, False)  # start clock low</p>
+    GPIO.output(cspin, False)     # bring CS low</p>
 
-    adcout = 0
-    # read in one empty bit, one null bit and 10 ADC bits
-    for i in range(12):
-        GPIO.output(clockpin, True)
-        GPIO.output(clockpin, False)
-        adcout <<= 1
-        if (GPIO.input(misopin)):
-            adcout |= 0x1
+    commandout = adcnum</p>
+    commandout |= 0x18  # start bit + single-ended bit</p>
+    commandout <<= 3    # we only need to send 5 bits here</p>
+    for i in range(5):</p>
+        if (commandout & 0x80):</p>
+            GPIO.output(mosipin, True)</p>
+        else:</p>
+            GPIO.output(mosipin, False)</p>
+        commandout <<= 1</p>
+        GPIO.output(clockpin, True)</p>
+        GPIO.output(clockpin, False)</p>
 
-    GPIO.output(cspin, True)
+    adcout = 0</p>
+    # read in one empty bit, one null bit and 10 ADC bits</p>
+    for i in range(12):</p>
+        GPIO.output(clockpin, True)</p>
+        GPIO.output(clockpin, False)</p>
+        adcout <<= 1</p>
+        if (GPIO.input(misopin)):</p>
+            adcout |= 0x1</p>
 
-    adcout >>= 1       # first bit is 'null' so drop it
-    return adcout
+    GPIO.output(cspin, True)</p>
 
-PWMOUT = 18
-SPICLK = 22
-SPIMISO = 23
-SPIMOSI = 24
-SPICS = 25
+    adcout >>= 1       # first bit is 'null' so drop it</p>
+    return adcout</p>
 
-# set up the interface pins
-GPIO.setup(PWMOUT, GPIO.OUT)
-GPIO.setup(SPIMOSI, GPIO.OUT)
-GPIO.setup(SPIMISO, GPIO.IN)
-GPIO.setup(SPICLK, GPIO.OUT)
-GPIO.setup(SPICS, GPIO.OUT)
+PWMOUT = 18</p>
+SPICLK = 22</p>
+SPIMISO = 23</p>
+SPIMOSI = 24</p>
+SPICS = 25</p>
 
-# 10k trim pot connected to adc #0
+# set up the interface pins</p>
+GPIO.setup(PWMOUT, GPIO.OUT)</p>
+GPIO.setup(SPIMOSI, GPIO.OUT)</p>
+GPIO.setup(SPIMISO, GPIO.IN)</p>
+GPIO.setup(SPICLK, GPIO.OUT)</p>
+GPIO.setup(SPICS, GPIO.OUT)</p>
+
+# 10k trim pot connected to adc #0</p>
 potentiometer_adc =0;
-pwm_freq = 50       # Set the PWM frequency to 50 Hz
-last_read = 0       # this keeps track of the last potentiometer value
-tolerance = 0       # to keep from being jittery we'll only change
-                    # volume when the pot has moved more than 5 'counts'
+pwm_freq = 50       # Set the PWM frequency to 50 Hz</p>
+last_read = 0       # this keeps track of the last potentiometer value</p>
+tolerance = 0       # to keep from being jittery we'll only change</p>
+                    # volume when the pot has moved more than 5 'counts'</p>
 
-# Configure the PWM pin
-p = GPIO.PWM(PWMOUT, pwm_freq)  # channel=18 frequency=50Hz
-p.start(9)
+# Configure the PWM pin</p>
+p = GPIO.PWM(PWMOUT, pwm_freq)  # channel=18 frequency=50Hz</p>
+p.start(9)</p>
 
-try:
-  while True:
-    # we'll assume that the pot didn't move
-    trim_pot_changed = False
+try:</p>
+  while True:</p>
+    # we'll assume that the pot didn't move</p>
+    trim_pot_changed = False</p>
 
-    # read the analog pin
-    trim_pot = readadc(potentiometer_adc, SPICLK, SPIMOSI, SPIMISO, SPICS)
-    # how much has it changed since the last read?
-    pot_adjust = abs(trim_pot - last_read)
+    # read the analog pin</p>
+    trim_pot = readadc(potentiometer_adc, SPICLK, SPIMOSI, SPIMISO, SPICS)</p>
+    # how much has it changed since the last read?</p>
+    pot_adjust = abs(trim_pot - last_read)</p>
 
-    if ( pot_adjust > tolerance ):
-        trim_pot_changed = True
-        last_read = trim_pot
+    if ( pot_adjust > tolerance ):</p>
+        trim_pot_changed = True</p>
+        last_read = trim_pot</p>
 
-    if ( trim_pot_changed ):
-        pwm_pct = round((trim_pot) / 2) # Determine current voltage percentage
-        pwm_pct = int(pwm_pct)            # Cast the value as an integer
-        DC= 1./18*(pwm_pct)
-        print "ADC read: ", trim_pot
-        print "PWM percentage: ", pwm_pct
-        print "PWM Duty Cycle: ", DC 
+    if ( trim_pot_changed ):</p>
+        pwm_pct = round((trim_pot) / 2) # Determine current voltage percentage</p>
+        pwm_pct = int(pwm_pct)            # Cast the value as an integer</p>
+        DC= 1./18*(pwm_pct)</p>
+        print "ADC read: ", trim_pot</p>
+        print "PWM percentage: ", pwm_pct</p>
+        print "PWM Duty Cycle: ", DC </p>
         
-        p.ChangeDutyCycle(DC)
+        p.ChangeDutyCycle(DC)</p>
 
-    # hang out and do nothing for a half second
-    time.sleep(0.5)
-except KeyboardInterrupt:
-    pass
+    # hang out and do nothing for a half second</p>
+    time.sleep(0.5)</p>
+except KeyboardInterrupt:</p>
+    pass</p>
 
-p.stop()
-GPIO.cleanup()
+p.stop()</p>
+GPIO.cleanup()</p>
  
 </div> 
 
