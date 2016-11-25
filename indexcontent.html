@@ -7,19 +7,61 @@
  
  
  <H3> Using A Flex sensor and Servo On The Raspberry Pi Using An MCP3008 </H3>
- <H2> MCP3008 </H2>
+ <H4> MCP3008 </H4>
  <p>
  In order to measure the X and Y voltages I decided to use an MCP3008 10 bit Analogue to Digital Converter.
  These devices are cheap, easy to setup and allow 8 analogue inputs to be read by the Pi using it’s SPI interface. 
  In this tutorial we will only need three of its inputs.
+ 
+<pre>VDD   3.3V
+VREF  3.3V
+AGND  GROUND
+CLK   GPIO11 (P1-23)
+DOUT  GPIO9  (P1-21)
+DIN   GPIO10 (P1-19)
+CS    GPIO8  (P1-24)
+DGND  GROUND</pre>
+ 
  </p>
  
  <img src="mcp3008.png" alt="MCP3008" style="width:304px;height:228px;">
+ 
+ <H4> Breadboard Circuit</H4>
+ 
+ <p>Here is my test circuit </P>
+ 
+ <img src="layout.png" alt="MCP3008" style="width:304px;height:228px;">
+ 
+ <p> The MCP3008 is wired up just as it was in my previous post :</p>
+ 
+ 
+ <pre>MCP3008 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Pi &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      Wire Colour
+--------------    ----------------        -----------
+Pin 1  (CH0)      -                       Purple
+Pin 2  (CH1)      -                       Blue
+Pin 3  (CH2)      -                       Green
+Pin 9  (DGND)     Pin 6  (Ground)         Black
+Pin 10 (CS)       Pin 24 (GPIO8)          Orange
+Pin 11 (DIN)      Pin 19 (GPIO10)         Yellow
+Pin 12 (DOUT)     Pin 21 (GPIO9)          Green
+Pin 13 (CLK)      Pin 23 (GPIO11)         Blue
+Pin 14 (AGND)     Pin 6  (Ground)         Black       
+Pin 15 (VREF)     Pin 1  (3.3V)           Red
+Pin 16 (VDD)      Pin 1  (3.3V)           Red</pre>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   
      
 	 
   
- </SECTION></HEADER>
+ </SECTION>
+ </HEADER>
  
  
  
